@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Control</title>
+    <meta name="description" content="Control your bot from the terminal.">
+    <link rel="icon" href="https://i.pinimg.com/564x/f7/dd/b6/f7ddb6a264c5310eca9c0a96cefc8a53.jpg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans:wght@400;500;700&display=swap">
+    <style type="text/css">
+        .body_foreground { color: #AAAAAA; }
+        .body_background { background-color: #000000; }
+        .inv_foreground { color: #000000; }
+        .inv_background { background-color: #AAAAAA; }
+        .ansi0 { color: #000000; } /* Black */
+        .ansi1 { font-weight: bold; }
+        .ansi2 { color: #000000; } /* Default */
+        .ansi3 { color: #000000; } /* Default */
+        .ansi4 { color: #000000; } /* Default */
+        .ansi5 { color: #000000; } /* Default */
+        .ansi6 { color: #000000; } /* Default */
+        .ansi7 { color: #000000; } /* Default */
+        .ansi8 { color: #000000; } /* Default */
+        .ansi9 { color: #000000; } /* Default */
+        .ansi30 { color: #000000; } /* Black */
+        .ansi31 { color: #aa0000; } /* Red */
+        .ansi32 { color: #00aa00; } /* Green */
+        .ansi33 { color: #aa5500; } /* Yellow */
+        .ansi34 { color: #0000aa; } /* Blue */
+        .ansi35 { color: #aa00aa; } /* Magenta */
+        .ansi36 { color: #00aaaa; } /* Cyan */
+        .ansi37 { color: #aaaaaa; } /* White */
+        .ansi90 { color: #555555; } /* Bright Black */
+        .ansi91 { color: #ff5555; } /* Bright Red */
+        .ansi92 { color: #55ff55; } /* Bright Green */
+        .ansi93 { color: #ffff55; } /* Bright Yellow */
+        .ansi94 { color: #5555ff; } /* Bright Blue */
+        .ansi95 { color: #ff55ff; } /* Bright Magenta */
+        .ansi96 { color: #55ffff; } /* Bright Cyan */
+        .ansi97 { color: #ffffff; } /* Bright White */
+    </style>
+        
+    <style>
+        :root {
+            --font-roboto: 'Roboto', sans-serif;
+            --font-noto-sans: 'Noto Sans', sans-serif;
+            --clr-bg: #242424;
+            --clr-bg-dark: #1a1a1a;
+            --clr-text: #d6d6d6;
+            --clr-error: #ff8585;
+            --clr-info: #85d1ff;
+            --clr-warning: #ffd285;
+            --clr-accent: #d666d1;
+            --clr-accent-dark: #a24da0;
+            --clr-accent-light: #f77af0;
+            --clr-accent-contrast: #fff;
+            --clr-accent-contrast-dark: #000;
+            --border-px: 16px;
+            --border-px-2: 20px;
+            --border-px-3: 25px;
+            --padding-px: 20px;
+            --padding-px-2: 12px;
+            --padding-px-3: 22px;
+        }
+        body {
+            font-family: var(--font-roboto);
+            background-color: var(--clr-bg-dark);
+            color: var(--clr-text);
+            padding: var(--padding-px);
+            margin: 0;
+            overflow: hidden;
+        }
+        .scrollable{
+            overflow-y: auto !important;
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--clr-bg);
+            border-radius: var(--border-px);
+            padding: var(--padding-px);
+            height: 91vh;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            height: 100%;
+            overflow: hidden;
+            justify-content: space-between; 
+        }
+
+        .nested-container {
+            flex: 1; 
+            background-color: var(--clr-bg-dark);
+            border-radius: var(--border-px-2);
+            padding: var(--padding-px);
+            overflow-y: hidden; 
+        }
+        .btn{
+            font-family: var(--font-roboto);
+            background-color: var(--clr-accent);
+            color: var(--clr-accent-contrast);
+            border: none;
+            padding: var(--padding-px-2) var(--padding-px-3);
+            border-radius: var(--border-px-3);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s ease-in-out;
+            &:hover{
+                background-color: var(--clr-accent-light);
+            }
+        }
+        .terminal {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--clr-bg);
+            border-radius: var(--border-px-2);
+            margin: 0 0 10px;
+            padding: var(--padding-px-2);
+            height: 81vh;
+            box-sizing: border-box;
+        }
+        .terminal-output {
+            flex: 1;
+            font-family: monospace;
+            background-color: var(--clr-bg-dark);
+            color: var(--clr-text);
+            border: none;
+            padding: var(--padding-px-2);
+            border-radius: var(--border-px);
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0 0 10px;
+        }
+        .terminal-input {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            gap: 10px;
+        }
+        .input{
+            font-family: var(--font-roboto);
+            background-color: var(--clr-bg-dark);
+            color: var(--clr-text);
+            border: none;
+            width: 70%;
+            padding: var(--padding-px-2) var(--padding-px-3);
+            border-radius: var(--border-px-3);
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+            outline: none;
+        }
+        .output{
+            background-color: var(--clr-bg-dark);
+            color: var(--clr-text);
+            border: none;
+            max-width: 100%;
+            margin: 0 0 10px;
+            padding: var(--padding-px-2);
+            border-radius: var(--border-px);
+        }
+        #logs{
+            background-color: var(--clr-bg-dark);
+            border-radius: var(--border-px-2);
+            text-align: left;
+            margin: auto;
+            padding: var(--padding-px-2);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            flex: 1;
+            overflow-y: auto; 
+            height: 100%;
+        }
+        .log { font-family: monospace; white-space: pre-wrap; }
+        .log-error { color: var(--clr-error); }
+        .log-info { color: var(--clr-info); }
+        .log-warning { color: var(--clr-warning); }
+        .reminder{
+            margin: 5px 0 0;
+            background-color: var(--clr-bg-dark);
+            border-radius: var(--border-px-3);
+            padding: var(--padding-px-2) var(--padding-px-3);
+        }
+        @media only screen and (max-width: 1083px) {
+            .margin-bottom{
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="container">
+            <div class="nested-container scrollable">
+                <div class="inner-nested-container">
+                    <div class="terminal">
+                        <div class="terminal-output" id="output"></div>
+                        <div class="terminal-input">
+                            <input class="input" type="text" id="command-input" placeholder="Enter command..." />
+                            <button class="btn samewidth" onclick="submitCommand()" title="Sends the entered command to the backend and retrieves the output">Run Command</button>
+                        </div>
+                        <div class="terminal-input">
+                            <p class="reminder">Note: Y/N questions or similar will not work. I'm lazy to make it work.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="inner-nested-container">
+                    <div class="buttons">
+                        <button class="btn margin-bottom" onclick="killApp()" title="Kills the flask app">Kill App</button>
+                        <button class="btn margin-bottom" onclick="clearLogs()" title="Clears the logs (doesnt work)">Clear Logs</button>
+                        <button class="btn margin-bottom" onclick="fetchLogs()" title="Refreshes the logs, if something goes wrong with the automatic refresh">RefreshLogs</button>
+                        <button class="btn margin-bottom" onclick="clearTerminal()" title="Clears the terminal output">Clear Terminal</button>
+                    </div>
+                </div>
+            </div>
+            <div class="nested-container">
+                <pre id="logs">{{ logs|safe }}</pre>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Socket.IO connected');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Socket.IO disconnected');
+        });
+        socket.on('output', function(data) {
+            const outputElement = document.getElementById('output');
+            // console.log('Received output:', data);
+            outputElement.innerHTML += data.data;
+            outputElement.scrollTop = outputElement.scrollHeight;
+        });
+
+        function submitCommand() {
+            const commandInput = document.getElementById('command-input');
+            const command = commandInput.value;
+            fetch('/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command })
+            });
+            commandInput.value = '';
+        }
+        document.getElementById('command-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                submitCommand(); 
+            }
+        });
+        function fetchLogs() {
+            fetch('/logs')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('logs').innerHTML = data;
+                })
+                .catch(error => console.error('Error fetching logs:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLogs();
+            setInterval(fetchLogs, 1000); 
+        });
+
+        function startBot() {
+            fetch('/start', { method: 'POST' });
+        }
+
+        function stopBot() {
+            fetch('/stop', { method: 'POST' });
+        }
+
+        function restartBot() {
+            fetch('/restart', { method: 'POST' });
+        }
+
+        function clearLogs() {
+            fetch('/clear', { method: 'POST' });
+        }
+        function clearTerminal() {
+            document.getElementById('output').textContent = '';
+        }
+        function killApp() {
+            fetch('/kill', { method: 'POST' });
+        }
+    </script>
+</body>
+</html>
